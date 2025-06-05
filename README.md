@@ -1,4 +1,5 @@
-![image](https://github.com/user-attachments/assets/9299dc82-fb4b-40cf-b66a-14cf1813067c)![image](https://github.com/user-attachments/assets/a080b81b-915f-4402-993c-aec05e8a82b4)![image](https://github.com/user-attachments/assets/733db3a1-096c-48e5-af50-a1a24240016a)# Ansible
+# Ansible
+
 
 ### Installing Ansible in Oracle linux 8.10
 1. Ans-server
@@ -381,7 +382,7 @@ chmod +x subnet_inventory.py
 
 ![image](https://github.com/user-attachments/assets/ff6e47ee-f275-4e2c-ab67-466dbf7a3922)
 
-### User Management in Ansible – Control Node vs. Managed Nodes
+### <span style="color:red">User Management in Ansible – Control Node vs. Managed Nodes</span>
 
 1. Do we need to create a user on managed nodes?
 Yes, a user must exist on the managed nodes for Ansible to connect and execute commands. This user should:
@@ -399,47 +400,50 @@ Yes, a user must exist on the managed nodes for Ansible to connect and execute c
 ✅ If you must run tasks as root, use become: yes in the playbook, which allows privilege escalation without logging in as root.
 4. How to define a user in an Ansible playbook?
 If you are using a specific user (e.g., ansible), define it in the playbook:
-	- hosts: demo
-  user: ansible  # Specify the user that will execute tasks
-  become: yes    # Enable privilege escalation (sudo)
-  connection: ssh  # Ensure SSH is used for communication
-	If different managed nodes require different users, define them in the inventory file:
-	
-	[web_servers]
+```
+-hosts: demo
+ user: ansible  # Specify the user that will execute tasks
+ become: yes    # Enable privilege escalation (sudo)
+ connection: ssh  # Ensure SSH is used for communication
+```
+If different managed nodes require different users, define them in the inventory file:
+```	
+[web_servers]
 server1 ansible_user=ansible
 server2 ansible_user=deployuser
-	5. Best Practices for User Management in Ansible
-	✅ Create a dedicated user on managed nodes (e.g., ansible).
-	✅ Set up SSH key-based authentication for secure, passwordless connections.
-	✅ Grant passwordless sudo access to the Ansible user to avoid password prompts.
-	✅ Avoid running Ansible as root directly.
-	✅ Define user access properly in inventory files for better control over different nodes.
-	By following these best practices, you ensure a secure, scalable, and efficient Ansible automation environment. 🚀
-	You said:
-	what about root user?
-	ChatGPT said:
-	I've included information about the root user in the previous notes, but here's a more detailed breakdown focusing on the root user in Ansible:
-	
-	Using Root User in Ansible – Best Practices
-	1. Can we use the root user in Ansible?
-	✅ Yes, but it's not recommended.
-	🔹 The root user has unrestricted privileges, which increases security risks.
-	🔹 If compromised, the root user can allow complete control over all managed nodes.
-	🔹 Best practice is to use a dedicated user with sudo access instead.
-	2. How to run Ansible as the root user?
-	There are two ways to execute Ansible tasks as root:
-	a) Directly SSH as root (Not Recommended ❌)
-		○ This means setting ansible_user=root in your inventory file and connecting as root.
-		○ Security risks include exposing the root password and enabling direct root SSH login.
-		○ Example inventory file:
+```
 
-i[servers]
+5. Best Practices for User Management in Ansible
+✅ Create a dedicated user on managed nodes (e.g., ansible).
+✅ Set up SSH key-based authentication for secure, passwordless connections.
+✅ Grant passwordless sudo access to the Ansible user to avoid password prompts.
+✅ Avoid running Ansible as root directly.
+✅ Define user access properly in inventory files for better control over different nodes.
+By following these best practices, you ensure a secure, scalable, and efficient Ansible automation environment. 🚀
+
+*You said:*What about root user?
+*ChatGPT said:*
+I've included information about the root user in the previous notes, but here's a more detailed breakdown focusing on the root user in Ansible:
+Using Root User in Ansible – Best Practices
+1. Can we use the root user in Ansible?
+✅ Yes, but it's not recommended.
+🔹 The root user has unrestricted privileges, which increases security risks.
+🔹 If compromised, the root user can allow complete control over all managed nodes.
+🔹 Best practice is to use a dedicated user with sudo access instead.
+2. How to run Ansible as the root user?
+There are two ways to execute Ansible tasks as root:
+a) Directly SSH as root (Not Recommended ❌)
+	○ This means setting ansible_user=root in your inventory file and connecting as root.
+	○ Security risks include exposing the root password and enabling direct root SSH login.
+	○ Example inventory file:
+```
+[servers]
 server1 ansible_host=192.168.1.10 ansible_user=root
-	b) Use become: yes for Privilege Escalation (Recommended ✅)
-		○ Instead of logging in as root, use a non-root user and escalate privileges when required.
-		○ Example playbook:
-
-yaml
+```
+b) Use become: yes for Privilege Escalation (Recommended ✅)
+	○ Instead of logging in as root, use a non-root user and escalate privileges when required.
+	○ Example playbook:
+```
 - hosts: all
   user: ansible   # Login as the ansible user
   become: yes     # Switch to root when needed
@@ -448,21 +452,22 @@ yaml
       apt:
         name: nginx
         state: present
-		○ This way, the playbook runs as ansible but executes privileged commands as root.
-	3. What if the managed node does not allow root SSH login?
-		○ Many systems disable root SSH login (PermitRootLogin no in /etc/ssh/sshd_config).
-		○ In such cases, you must connect as a non-root user and use become: yes for administrative tasks.
-	4. How to avoid entering the sudo password manually?
-		○ If become: yes requires a password, you can configure passwordless sudo:
-echo "ansible ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/ansible
-		○ This allows the ansible user to use sudo without being prompted for a password.
-	5. When should we use the root user?
-	✔️ When provisioning a new server where no user accounts exist yet.
-	✔️ If you’re running commands that require root without sudo.
-	✔️ For quick one-time tasks where security is not a concern.
-	6. Final Recommendation
-	🚫 Avoid using root directly for regular automation.
-	✅ Instead, use a non-root user with sudo privileges and become: yes.
-	✅ Ensure the user has passwordless sudo for seamless automation.
-	By following these practices, you maintain security, flexibility, and efficiency in your Ansible environment. 🔒🚀
+```
+	○ This way, the playbook runs as ansible but executes privileged commands as root.
+3. What if the managed node does not allow root SSH login?
+	○ Many systems disable root SSH login (PermitRootLogin no in /etc/ssh/sshd_config).
+	○ In such cases, you must connect as a non-root user and use become: yes for administrative tasks.
+4. How to avoid entering the sudo password manually?
+	○ If become: yes requires a password, you can configure passwordless sudo:
+`echo "ansible ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/ansible`
+	○ This allows the ansible user to use sudo without being prompted for a password.
+5. When should we use the root user?
+✔️ When provisioning a new server where no user accounts exist yet.
+✔️ If you’re running commands that require root without sudo.
+✔️ For quick one-time tasks where security is not a concern.
+6. Final Recommendation
+🚫 Avoid using root directly for regular automation.
+✅ Instead, use a non-root user with sudo privileges and become: yes.
+✅ Ensure the user has passwordless sudo for seamless automation.
+By following these practices, you maintain security, flexibility, and efficiency in your Ansible environment. 🔒🚀
 
