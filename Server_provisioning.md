@@ -149,7 +149,7 @@ This will provision a Compute instance on OCI.
 
 `ssh -i ~/.ssh/id_rsa opc@<INSTANCE_PUBLIC_IP>`
 
-### NOTE
+### -----------------------------------NOTE-------------------------------------------------------------------------------------
 
 `ssh_authorized_keys: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"`
 Explanation:
