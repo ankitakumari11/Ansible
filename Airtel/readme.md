@@ -64,7 +64,23 @@ collection_path=/home/ansible/mycollection
 become=true
 ----------
 ```
-
+> [!IMPORTANT]
+> Now as ansible user u have /home and inside it /home/inventory and /home/ansible.cfg and u also create /home/playbooks and then /home/playbooks/first.yml and now after :
+> `cd playbook`  
+> `ansible@master-server2:~/playbooks$ ansible-playbook first.yaml`
+> You will get this error:
+> `error: provided hosts list is empty, only localhost is available.`
+>  In the ~/playbooks folder, Ansible couldn’t find a config file (ansible.cfg) or an inventory file there.So it defaulted to looking in /etc/ansible/ansible.cfg and didn’t find your inventory — hence no hosts matched demo.
+> Ansible’s Config Search Order
+> - ANSIBLE_CONFIG (env variable)
+> - ansible.cfg (in the current directory)
+> - ~/.ansible.cfg (in the user home)
+> - /etc/ansible/ansible.cfg (system-wide)
+> Steps to resolve
+> ```
+> nano ~/profile
+> export ANSIBLE_CONFIG=~/ansible.cfg
+> ```
 `ssh 10.0.0.160`
 > here you are required to put password so to avoid it , create a key on ansible server inside ansible user and paste public key to all the nodes
 
