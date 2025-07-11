@@ -67,3 +67,47 @@ step 4; Establish conncetion among the servers
  
 `ansible -m ping 172.31.93.231`
 
+step5 :  
+- Create a file : `mkdir playbooks`
+- create 3 yaml files:
+  - index.html
+  - playbook1.yml
+
+vi index.html  
+```
+Hello World
+```
+
+vi playbook1.html
+```
+- hosts: webservers
+  remote_user: root
+  become: yes
+  tasks:
+    - name: httpd
+      yum: name=httpd state=installed
+    - name: copy index.html file
+      copy: src=index.html dest=/var/www/html
+    - name: start httpd
+      service: name=httpd state=started
+```
+
+```
+ansible-playbook playbook1.yml
+```
+<img width="1895" height="837" alt="image" src="https://github.com/user-attachments/assets/34cc00b2-2425-4612-8eec-470820c2ecb5" />
+
+Now go to security group of your target vms and allow ingress at 80 from all.  
+  
+<img width="1893" height="883" alt="image" src="https://github.com/user-attachments/assets/eaf48148-456c-4978-87d2-8f60fd45d3a9" />  
+
+Now to go browser and write : http://public-ip of target server  
+
+<img width="797" height="154" alt="image" src="https://github.com/user-attachments/assets/4eed863c-1e52-47fc-9859-d815986abbf4" />  
+
+
+
+
+
+
+
