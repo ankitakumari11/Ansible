@@ -65,5 +65,5 @@ step 4; Establish conncetion among the servers
 `systemctl restart sshd`
 `ansible -m ping <private IP of nodes>`
  
-
+`ansible -m ping 172.31.93.231`
 
