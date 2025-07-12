@@ -303,7 +303,8 @@ ansible-vault decrypt playbook8vault.yml
 
 
 vim playbook9register.yml
-
+  
+```
 ---
 - hosts: webservers
   remote_user: root
@@ -318,19 +319,20 @@ vim playbook9register.yml
       register: output
     - debug:
         msg: "{{output}}"
-		
-Tags:
-By using tags we can control execution of playbook. we can execute perticular steps
-Method1:
-ansibe-playbook <playbook name> --tag "install,configure"
-ansible-playbook <plabook name> --skip-tags "configure"
-Method2:
-ansible-playbook <playbook name> --start-at-task="copy index.html file"
-Method3:
-ansible-playbook <Playbook name> --step
+```
+  	
+#### Tags:  
+By using tags we can control execution of playbook. we can execute perticular steps  
+- Method1:
+  - ansibe-playbook <playbook name> --tag "install,configure"
+  - ansible-playbook <plabook name> --skip-tags "configure"
+- Method2:
+  - ansible-playbook <playbook name> --start-at-task="copy index.html file"
+- Method3:
+  - ansible-playbook <Playbook name> --step
 		
 vim Playbook10tags.yml
-
+```
 ---
 - hosts: webservers
   remote_user: root
@@ -348,21 +350,25 @@ vim Playbook10tags.yml
       service: name=httpd state=started
       tags:
        - service
-	   
-Include Method:
+```  	   
+## Include Method:
 
 vim install.yml
+```
 ---
 - name: httpd
   yum: name=httpd state=installed
-  
+```
+ 
 vim service.yml
+```
 ---
 - name: start httpd
   service: name=httpd state=started
-	   
+```
+     
 vim playbook11include.yml
-
+```
 ---
 - hosts: webservers
   remote_user: root
@@ -370,10 +376,11 @@ vim playbook11include.yml
   tasks:
    - include: install.yml
    - include: service.yml
-   
+ ```  
 To use when condition in playbook
    
 vim playbook12when.yml
+```
 ---
 - hosts: webservers
   remote_user: root
@@ -385,7 +392,7 @@ vim playbook12when.yml
     - name: install apache2
       apt: name=apache2,state=installed
       when: ansible_os_family== "Debian"
-	  
+```	  
 Setup module
 ansible <private IP of target node> -m setup  - It will give complete information about the node
 
