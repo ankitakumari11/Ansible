@@ -105,8 +105,289 @@ Now to go browser and write : http://public-ip of target server
 
 <img width="797" height="154" alt="image" src="https://github.com/user-attachments/assets/4eed863c-1e52-47fc-9859-d815986abbf4" />  
 
+## VARIABLES IN ANSIBLE
+
+vim playbook2var.yml
+```
+- hosts: webservers
+  remote_user: root
+  become: yes
+  vars:
+    pkg: httpd
+  tasks:
+    - name: installing httpd
+      yum: name={{pkg}} state=installed
+    - name: copy index.html file
+      copy: src=index.html dest=/var/www/html
+    - name: start httpd
+      service: name={{pkg}} state=started
+
+```
+
+`ansible-playbook playbook3varfile.yml"
+
+#### Use of variable file:
+vim var.yml  
+```
+pkg: httpd
+```
+  
+vim playbook3varfile.yml  
+```
+---
+- hosts: webservers
+  remote_user: root
+  become: yes
+  vars_files:
+   - var.yml
+  tasks:
+    - name: installing httpd
+      yum: name={{pkg}} state=installed
+    - name: copy index.html file
+      copy: src=index.html dest=/var/www/html
+    - name: start httpd
+      service: name={{pkg}} state=started
+```  
+
+<img width="1887" height="595" alt="image" src="https://github.com/user-attachments/assets/37c881de-13c9-4c16-a372-d0eefab0f9cf" />
+
+  
+## Interactive mode: user will be asked the package name
+  
+vim playbook4varfile.yml  
+```
+---
+- hosts: webservers
+  remote_user: root
+  become: yes
+  vars_prompt:
+   - name: pkg
+     prompt: enter package name
+     private: no
+  tasks:
+    - name: installing httpd
+      yum: name={{pkg}} state=installed
+    - name: copy index.html file
+      copy: src=index.html dest=/var/www/html
+    - name: start httpd
+      service: name={{pkg}} state=started
+```
+
+<img width="1882" height="651" alt="image" src="https://github.com/user-attachments/assets/98f4c981-3376-483d-8291-20db43ef524f" />
+
+Now if you wirte private: yes , then whatever u type , it wont be visible but it is taking input:
+```
+---
+- hosts: webservers
+  remote_user: root
+  become: yes
+  vars_prompt:
+   - name: pkg
+     prompt: enter package name
+     private: yes
+  tasks:
+    - name: installing httpd
+      yum: name={{pkg}} state=installed
+    - name: copy index.html file
+      copy: src=index.html dest=/var/www/html
+    - name: start httpd
+      service: name={{pkg}} state=started
+```
+
+<img width="1901" height="577" alt="image" src="https://github.com/user-attachments/assets/cac6bc44-e5fc-4b69-a6eb-3431958b19a2" />
+
+## HANDLERS
+
+first delete the previous index.html  
+
+vim playbook5handlers.yml  
+
+```
+---
+- hosts: webservers
+  remote_user: root
+  become: yes
+  tasks:
+    - name: httpd
+      yum: name=httpd state=installed
+    - name: copy index.html file
+      copy: src=index.html dest=/var/www/html
+      notify: restart httpd
+    - name: start httpd
+      service: name=httpd state=started
+  handlers:
+   - name: restart httpd
+     service: name=httpd state=restarted
+```
+
+<img width="1630" height="673" alt="image" src="https://github.com/user-attachments/assets/e7f13977-7f45-4927-ac6a-2e33f5d08195" />
+
+## IGNORE ERRORS:
+
+vim playbook6ignore.yml
+
+---
+- hosts: webservers
+  remote_user: root
+  become: yes
+  tasks:
+    - name: httpd
+      yum: name=httpd state=installed
+    - name: copy index1.html file
+      copy: src=index1.html dest=/var/www/html
+      ignore_errors: yes
+    - name: start httpd
+      service: name=httpd state=started
+
+*here since u have written ignore yes so even error came , still it ignored it and completed the playbook
+<img width="1896" height="841" alt="image" src="https://github.com/user-attachments/assets/377930a7-2f9d-4b5a-8ea7-46e7e59f6c4c" />
 
 
+<img width="934" height="360" alt="image" src="https://github.com/user-attachments/assets/4e48fdb2-3259-43aa-a9e6-7a2559ee210b" />  
+
+<img width="1901" height="818" alt="image" src="https://github.com/user-attachments/assets/3b54edc0-32ab-490b-b47a-a4f09c3a4a82" />
+
+
+  
+## FOR LOOPS
+
+vi playbook7 
+```
+---
+- hosts: webservers
+  remote_user: root
+  become: yes
+  tasks:
+   - name: To install multiple packages
+     yum: name={{item}} state=installed
+     with_items:
+        - httpd
+        - wget
+        - curl
+```
+
+## VAULT MODULE
+
+Vault module: vault module will be used to encrypt the playbook  	
+commands:  
+- ansible-vault encrypt playbook8vault.yml  - to encrypt the playbook
+- ansible-vault edit playbook8vault.yml  - to edit the playbook
+- ansible-vault decrypt playbook8vault.yml - To descrypt the playbook  
+
+<img width="1110" height="223" alt="image" src="https://github.com/user-attachments/assets/b770e059-edcf-4bb0-a55a-4b029361a9f1" />
+  
+
+vim playbook8vault.yml  
+```
+---
+- hosts: webservers
+  remote_user: root
+  become: yes
+  tasks:
+    - name: httpd
+      yum: name=httpd state=installed
+    - name: copy index1.html file
+      copy: src=index1.html dest=/var/www/html
+    - name: start httpd
+      service: name=httpd state=started
+
+```
+
+If u do directly vi playbook8vault.yml or cat , it will show encrypted file:  
+
+<img width="1217" height="738" alt="image" src="https://github.com/user-attachments/assets/78eb562d-e5aa-4a58-a524-bfaea99af694" />
+
+ansible-vault decrypt playbook8vault.yml  
+
+<img width="1053" height="437" alt="image" src="https://github.com/user-attachments/assets/ddaa0ff0-8671-4cd9-ba66-5c3ce46a4ad9" />
+
+
+vim playbook9register.yml
+
+---
+- hosts: webservers
+  remote_user: root
+  become: yes
+  tasks:
+    - name: httpd
+      yum: name=httpd state=installed
+    - name: copy index.html file
+      copy: src=index.html dest=/var/www/html
+    - name: start httpd
+      service: name=httpd state=started
+      register: output
+    - debug:
+        msg: "{{output}}"
+		
+Tags:
+By using tags we can control execution of playbook. we can execute perticular steps
+Method1:
+ansibe-playbook <playbook name> --tag "install,configure"
+ansible-playbook <plabook name> --skip-tags "configure"
+Method2:
+ansible-playbook <playbook name> --start-at-task="copy index.html file"
+Method3:
+ansible-playbook <Playbook name> --step
+		
+vim Playbook10tags.yml
+
+---
+- hosts: webservers
+  remote_user: root
+  become: yes
+  tasks:
+    - name: httpd
+      yum: name=httpd state=installed
+      tags:
+       - install
+    - name: copy index.html file
+      copy: src=index.html dest=/var/www/html
+      tags:
+       - configure
+    - name: start httpd
+      service: name=httpd state=started
+      tags:
+       - service
+	   
+Include Method:
+
+vim install.yml
+---
+- name: httpd
+  yum: name=httpd state=installed
+  
+vim service.yml
+---
+- name: start httpd
+  service: name=httpd state=started
+	   
+vim playbook11include.yml
+
+---
+- hosts: webservers
+  remote_user: root
+  become: yes
+  tasks:
+   - include: install.yml
+   - include: service.yml
+   
+To use when condition in playbook
+   
+vim playbook12when.yml
+---
+- hosts: webservers
+  remote_user: root
+  become: yes
+  tasks:
+    - name: httpd
+      yum: name=httpd state=installed
+      when: ansible_os_family== "RedHat"
+    - name: install apache2
+      apt: name=apache2,state=installed
+      when: ansible_os_family== "Debian"
+	  
+Setup module
+ansible <private IP of target node> -m setup  - It will give complete information about the node
 
 
 
