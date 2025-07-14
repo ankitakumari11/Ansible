@@ -1,4 +1,4 @@
-<img width="1909" height="692" alt="image" src="https://github.com/user-attachments/assets/82ff84fe-75db-4e80-98f2-9a1d918e8631" /># <ins>Ansible</ins>
+# <ins>Ansible</ins>
 
 ![image](https://github.com/user-attachments/assets/c0ecac23-3d98-4af9-9be4-88a2fbb469b9)
   
@@ -327,17 +327,22 @@ vim playbook9register.yml
      <img width="1909" height="692" alt="image" src="https://github.com/user-attachments/assets/79feebce-403a-4b61-bc02-d700b6d4e146" />
   
 
-#### Tags:  
+#### Tags:   
+  
 By using tags we can control execution of playbook. we can execute perticular steps  
 - Method1:
-  - ansibe-playbook <playbook name> --tag "install,configure"
-  - ansible-playbook <plabook name> --skip-tags "configure"
+  - ansibe-playbook <playbook name> --tag "install,configure" : eg: ansible-playbook Playbook10tags.yml --tag "install,configure"
+  - ansible-playbook <plabook name> --skip-tags "configure" : eg: ansible-playbook Playbook10tags.yml --skip-tags "configure"
 - Method2:
   - ansible-playbook <playbook name> --start-at-task="copy index.html file"
+                  <img width="1891" height="676" alt="image" src="https://github.com/user-attachments/assets/81138652-7306-4b2e-bc55-1baf07265405" />
+
 - Method3:
-  - ansible-playbook <Playbook name> --step
+  - ansible-playbook <Playbook name> --step (it will ask at every step if u want to perform that task or not)
+                 <img width="1904" height="655" alt="image" src="https://github.com/user-attachments/assets/4e3488c1-c9e8-447a-81fd-c0be38d423b7" />
+
 		
-vim Playbook10tags.yml
+vim Playbook10tags.yml  
 ```
 ---
 - hosts: webservers
@@ -358,6 +363,8 @@ vim Playbook10tags.yml
        - service
 ```  	   
 ## Include Method:
+
+If u want to resuse the same ymls again and again then u can use include method.  
 
 vim install.yml
 ```
@@ -382,8 +389,10 @@ vim playbook11include.yml
   tasks:
    - include: install.yml
    - include: service.yml
- ```  
-To use when condition in playbook
+ ```
+
+
+## To use when condition in playbook
    
 vim playbook12when.yml
 ```
@@ -398,8 +407,11 @@ vim playbook12when.yml
     - name: install apache2
       apt: name=apache2,state=installed
       when: ansible_os_family== "Debian"
-```	  
-Setup module
+```
+
+   <img width="1910" height="695" alt="image" src="https://github.com/user-attachments/assets/637632e1-981d-4a04-9c7c-74e54dfb9bfe" />
+
+## Setup module  
 ansible <private IP of target node> -m setup  - It will give complete information about the node
 
 
