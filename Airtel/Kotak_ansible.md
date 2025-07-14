@@ -1,4 +1,4 @@
-# <ins>Ansible</ins>
+<img width="1909" height="692" alt="image" src="https://github.com/user-attachments/assets/82ff84fe-75db-4e80-98f2-9a1d918e8631" /># <ins>Ansible</ins>
 
 ![image](https://github.com/user-attachments/assets/c0ecac23-3d98-4af9-9be4-88a2fbb469b9)
   
@@ -320,7 +320,13 @@ vim playbook9register.yml
     - debug:
         msg: "{{output}}"
 ```
-  	
+
+- Service module ensures the httpd service is running. (It does not enable it for boot; add enabled: yes if you want that.)
+- register: output captures the module’s return dictionary in a variable called output. The dict tells you whether anything changed, exit status, etc.
+
+     <img width="1909" height="692" alt="image" src="https://github.com/user-attachments/assets/79feebce-403a-4b61-bc02-d700b6d4e146" />
+  
+
 #### Tags:  
 By using tags we can control execution of playbook. we can execute perticular steps  
 - Method1:
