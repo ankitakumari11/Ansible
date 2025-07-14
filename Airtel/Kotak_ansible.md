@@ -417,6 +417,68 @@ ansible <private IP of target node> -m setup  - It will give complete informatio
    <img width="1920" height="529" alt="image" src="https://github.com/user-attachments/assets/cbbde40c-2ddd-4da6-a323-5d94b7a7a622" />
 
   
+## Ansible-Roles
+
+We didnt create these folders , at the time of ansible installation only , it created these folder like playbooks , roles etc  
+
+<img width="1893" height="163" alt="image" src="https://github.com/user-attachments/assets/a3cd107d-0d3e-47a5-bede-144bb8f3da2d" />
+
+`ansible-galaxy init ankita-role` -> This will create a role.
+
+<img width="1920" height="225" alt="image" src="https://github.com/user-attachments/assets/752650be-3b53-400f-a893-ca5a93496c3f" />
+
+- Here inside **files** , we can write .html files directly (write index.html)
+```
+<html>
+        <body>
+                <h1> Hello world </h1>
+        </body>
+</html>
+```
+  
+- Inside **tasks** , u can write tasks (write main.yml)
+```
+---
+# tasks file for ankita-role
+- name: httpd
+  yum: name=httpd state=installed
+- name: copy index.html file
+  copy: src=index.html dest=/var/www/html
+- name: start httpd
+  service: name=httpd state=started
+```
+
+
+- Inside **vars** , u can write variables
+- So ansible roles is the structures directory.
+- Now go inside files and tasks and write infex.html and tasks inside tasks/main.yml
+      <img width="1920" height="695" alt="image" src="https://github.com/user-attachments/assets/b2f4dace-9b6f-4b52-9ecb-1bcf9db85aa7" />
+
+- Now after writing index and main.yml inside files and tasks of roles/ankita-role , go back to /etc/ansible/playbooks and create a my_role.yml file.
+  ```
+  [root@ip-172-31-83-27 tasks]# cd ..`
+  [root@ip-172-31-83-27 ankita-role]# cd ..
+  [root@ip-172-31-83-27 roles]# cd ..
+  [root@ip-172-31-83-27 ansible]# ls
+    ansible.cfg  hosts  playbooks  roles
+  [root@ip-172-31-83-27 ansible]# cd playbooks/
+  [root@ip-172-31-83-27 playbooks]# vim my_role.yml
+  ```
+- vim my_role.yml
+  ```
+  ---
+  - hosts: webservers
+    remote_user: root
+    become: yes
+    roles:
+     - ankita-role
+  ```
+- `ansible-playbook my_role.yml`
+                    <img width="1901" height="680" alt="image" src="https://github.com/user-attachments/assets/3639baa0-1705-4674-8df5-0297a6543ce6" />
+
+  
+
+
 
 
 
