@@ -414,6 +414,10 @@ vim playbook12when.yml
 ## Setup module  
 ansible <private IP of target node> -m setup  - It will give complete information about the node
 
+   <img width="1920" height="529" alt="image" src="https://github.com/user-attachments/assets/cbbde40c-2ddd-4da6-a323-5d94b7a7a622" />
+
+  
+
 
 
 
