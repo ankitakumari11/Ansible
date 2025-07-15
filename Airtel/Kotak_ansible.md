@@ -225,7 +225,7 @@ vim playbook5handlers.yml
 ## IGNORE ERRORS:
 
 vim playbook6ignore.yml
-
+```
 ---
 - hosts: webservers
   remote_user: root
@@ -238,8 +238,8 @@ vim playbook6ignore.yml
       ignore_errors: yes
     - name: start httpd
       service: name=httpd state=started
-
-*here since u have written ignore yes so even error came , still it ignored it and completed the playbook
+```
+*here since u have written ignore yes so even error came , still it ignored it and completed the playbook*
 <img width="1896" height="841" alt="image" src="https://github.com/user-attachments/assets/377930a7-2f9d-4b5a-8ea7-46e7e59f6c4c" />
 
 
