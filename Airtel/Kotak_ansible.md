@@ -327,7 +327,7 @@ vim playbook9register.yml
      <img width="1909" height="692" alt="image" src="https://github.com/user-attachments/assets/79feebce-403a-4b61-bc02-d700b6d4e146" />
   
 
-#### Tags:   
+## Tags:   
   
 By using tags we can control execution of playbook. we can execute perticular steps  
 - Method1:
