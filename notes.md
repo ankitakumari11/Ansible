@@ -91,6 +91,12 @@ host_vars/
 - group_vars/ → Variables that apply to all hosts in a group.
 - host_vars/ → Variables for a specific server.
 
+> [!NOTE]
+> - Inside group_vars/, you create a YAML file for each group defined in your inventory (hosts.ini).
+> - The filename must match the group name in your inventory.
+> - Inside the YAML file, you define variables that will apply to all hosts in that group.
+
+
 # 🔹 Jinja2
 
 - Jinja2 is a templating engine used in Ansible to make files, variables, and outputs dynamic.
