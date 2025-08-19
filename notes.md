@@ -96,7 +96,86 @@ host_vars/
 > - The filename must match the group name in your inventory.
 > - Inside the YAML file, you define variables that will apply to all hosts in that group.
 
+# 🔹 Inventory file contents 
+```
 
+[ansible@automation-vm-1 inventory]$ cat hosts.ini
+# ==========================
+# Top-Level groups
+# ==========================
+[all:children]
+#apc_north
+apc_south
+
+# ==========================
+# APC South region
+# ==========================
+[apc_south:children]
+#apc_south_az1
+apc_south_az2
+
+#[apc_south_az1:children]
+#apc_south_az1_linux
+#apc_south_az1_windows
+
+
+[apc_south_az2:children]
+apc_south_az2_linux
+apc_south_az2_windows
+
+[apc_south_az2_linux]
+test-vm-auto-01 ansible_host=rhel-01.test.example.com ansible_ssh_private_key_file=/home/ansible/.ssh/keys/test-vm-auto-01_id_rsa
+test-vm-auto-02 ansible_host=rhel-02.test.example.com ansible_ssh_private_key_file=/home/ansible/.ssh/keys/test-vm-auto-02_id_rsa
+test-vm-auto-04 ansible_host=ubuntu-01.test.example.com ansible_ssh_private_key_file=/home/ansible/.ssh/keys/test-vm-auto-04_id_rsa
+
+[apc_south_az2_windows]
+test-vm-auto-03 ansible_host=10.20.0.113
+```
+
+2️⃣ Basic concepts
+  
+a. Groups
+- A group is just a label for a set of hosts.
+- Example: [apc_south_az2_linux] is a group containing Linux servers in "APC South AZ2".
+  
+b. Children groups
+- A “child” group is a subgroup inside a bigger group.
+- This helps organize hosts hierarchically.
+- Syntax: [parent_group:children]
+```
+[all:children]
+apc_south
+```
+- all is a built-in top-level group.
+- Here, apc_south is a child of all.
+- That means all hosts in apc_south (and its children) automatically belong to all.
+  
+3️⃣ Nested children
+```
+[apc_south:children]
+apc_south_az2
+```
+- apc_south_az2 is a child of apc_south.
+- All hosts in apc_south_az2 are also considered part of apc_south automatically.
+```
+[apc_south_az2:children]
+apc_south_az2_linux
+apc_south_az2_windows
+```
+- Now, apc_south_az2 has two children: apc_south_az2_linux and apc_south_az2_windows.
+- Any play targeting apc_south_az2 will include all Linux and Windows servers in AZ2.
+
+4️⃣ Hosts in groups
+```
+[apc_south_az2_linux]
+test-vm-auto-01 ansible_host=rhel-01.test.example.com ansible_ssh_private_key_file=/home/ansible/.ssh/keys/test-vm-auto-01_id_rsa
+test-vm-auto-02 ansible_host=rhel-02.test.example.com ansible_ssh_private_key_file=/home/ansible/.ssh/keys/test-vm-auto-02_id_rsa
+```
+- test-vm-auto-01 is the hostname you’ll use in Ansible.
+- ansible_host is the real IP or FQDN to connect to.
+- ansible_ssh_private_key_file is the key used to connect via SSH.
+
+  
 # 🔹 Jinja2
 
 - Jinja2 is a templating engine used in Ansible to make files, variables, and outputs dynamic.
