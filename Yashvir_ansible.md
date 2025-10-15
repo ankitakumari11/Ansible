@@ -56,7 +56,9 @@ Example: apc_south_az2_linux.yml
 ansible_user: cloud-user
 ```
 *This means all Linux servers in the apc_south_az2_linux group will be accessed using the SSH user cloud-user.*  
-
+  
+<img width="532" height="267" alt="image" src="https://github.com/user-attachments/assets/451d36fc-1fc6-4739-a9a9-c058647cf6a9" />
+  
 c. host_vars/
 - This folder is similar to group_vars, but variables here are specific to one host.
 - `host_vars/linux-server1.yml`
