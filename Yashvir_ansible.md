@@ -372,3 +372,8 @@ Host *.airtelproduct.com
 7. **linux-site.yml** : same as "orig-linux-site.yml".This is a simplified or customized version of the original.
 8. **facts** : these are the facts being gathered by ansible for each server , it is defined inside ansible.cfg file.
 
+| Phase           | SSH config used      | Key directory used |
+| --------------- | -------------------- | ------------------ |
+| During rotation | `ssh-key-rotate.cfg` | `orig-keys/`       |
+| After rotation  | `ssh.cfg`            | `active-keys/`     |
+
