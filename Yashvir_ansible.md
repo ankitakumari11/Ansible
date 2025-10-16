@@ -371,6 +371,18 @@ Host *.airtelproduct.com
 6. **orig-linux-site.yml** : actual kind of main.yml file where we are defining which roles to be used in ansible implementation.This is your master playbook for hardening and standardizing Linux servers.
 7. **linux-site.yml** : same as "orig-linux-site.yml".This is a simplified or customized version of the original.
 8. **facts** : these are the facts being gathered by ansible for each server , it is defined inside ansible.cfg file.
+9. **ssh_key_rotation.yml** : It executes all the automation defined under the role roles/linux_configure_ssh_key_rotation.
+```
+---
+- name: 'Rotate SSH keys'
+  hosts: 'all'
+  gather_facts: 'yes'
+  roles:
+    - linux_configure_ssh_key_rotation
+```
+10. **ssh-key-rotate.cfg** : This SSH configuration is used during rotation — it tells Ansible which keys to use when connecting to servers before the new ones are installed.
+- It uses keys from: `./orig-keys/%h` : meaning: use the original keys for existing SSH sessions.
+- Once rotation is complete, new keys are stored under: `./active-keys/` and your normal ssh.cfg will start using them instead.
 
 | Phase           | SSH config used      | Key directory used |
 | --------------- | -------------------- | ------------------ |
