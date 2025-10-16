@@ -281,3 +281,94 @@ default_shell: /bin/sh
 ansible-playbook site.yml -e "new_user=cliuser default_shell=/bin/zsh"
 ```
    
+## APC-AUTOMATION VM DIRECTORY STRUCTURE
+
+```
+
+[ansible@automation-vm-1 os_mgmt]$ ls -ltr
+total 52
+-rw-r-----  1 ansible ansible  479 Aug 16 22:59 ansible.cfg
+-rw-r-----  1 ansible ansible  115 Aug 17 20:45 ssh_key_rotation.yml
+-rw-r-----  1 ansible ansible  489 Aug 18 12:37 ssh-key-rotate.cfg
+-rw-r-----  1 ansible ansible  306 Sep 27 15:28 windows-site.yml
+drwxr-x---  2 ansible ansible    6 Sep 27 18:42 files
+-rw-------  1 ansible ansible 1675 Sep 28 23:23 bastion-kp-1.pem
+drwxr-x--- 51 ansible ansible 4096 Oct 11 22:31 roles
+-rw-r-----  1 ansible ansible  804 Oct 15 21:15 ssh.cfg
+drwxr-x---  4 ansible ansible   58 Oct 15 21:23 inventory
+drwxr-x---  2 ansible ansible  159 Oct 15 21:46 orig-keys
+drwx------  2 ansible ansible 4096 Oct 15 21:47 active-keys
+drwxr-x---  2 ansible ansible 4096 Oct 15 21:47 backup-keys
+-rw-r-----  1 ansible ansible  557 Oct 15 22:17 orig-linux-site.yml
+drwxr-x---  2 ansible ansible 4096 Oct 15 23:03 facts
+-rw-r-----  1 ansible ansible  152 Oct 15 23:04 linux-site.yml
+drwxr-x---  2 ansible ansible 4096 Oct 15 23:05 backups
+```
+
+1. **ansible.cfg**: custom configuration file for ansible created by us otherwise ansible will use this default file : /etc/ansible/ansible.cfg . this file defines how Ansible behaves when you run playbooks in this directory.
+```
+
+[defaults]
+callback_whitelist = profile_tasks
+fact_caching = jsonfile
+fact_caching_timeout = 86400
+fact_caching_connection = ./facts/
+force_handlers = True
+fork = 50
+gathering = smart
+inventory = ./inventory/hosts.ini
+retry_files_enabled = False
+timeout = 3
+deprecation_warnings=False
+ANSIBLE_PYTHON_INTERPRETER=auto_silent
+
+[ssh_connection]
+pipelining = False
+ssh_args = -F ./ssh.cfg
+```
+2. **ssh.cfg** :ssh.cfg is a custom SSH configuration used by Ansible (and normal SSH too) to control how it connects to remote servers — including direct and bastion/jump-host connections.
+```
+Host *
+    StrictHostKeyChecking=no
+    Compression yes
+    ConnectionAttempts 5
+    ControlMaster auto
+    ControlPath /tmp/%u-%r@%h:%p
+    ControlPersist 8h
+    IdentityFile ./active-keys/%h
+    ServerAliveCountMax 5
+    ServerAliveInterval 15
+    StrictHostKeyChecking no
+    TCPKeepAlive yes
+    Port 22
+    User cloud-user
+
+# Jump host configuration
+Host bastion
+   User cloud-user
+   Hostname 103.196.132.106
+   IdentityFile /home/ansible/os_mgmt/active-keys/test-vm-1-kp.pem
+
+Host *.airtelproduct.com
+  ProxyJump bastion
+```
+   - Ansible relies on SSH for connecting to remote hosts, but it doesn’t generate a ssh.cfg by default.
+   - By default, Ansible uses your system SSH settings (from ~/.ssh/config).
+   - However, in many production or enterprise setups (like yours), we want:
+   - Custom SSH keys per host (like /active-keys/%h)
+   - Bastion/jump host setup
+   - Connection optimizations (ControlPersist, KeepAlive, etc.)
+   - Non-interactive SSH (for automation)
+   - So, we create a custom ssh.cfg file inside the project and then point to it from ansible.cfg:
+     ```
+     [ssh_connection]
+     ssh_args = -F ./ssh.cfg
+     ```
+
+3. **orig-keys** : private keys of all the target servers
+4. **active-keys** : private and public keys of all the target servers  ( this folder is used by ssh.cfg to login to target servers [private keys] )
+5. **backup-keys** : backup of all the public keys of all the target servers.
+6. **orig-linux-site.yml** : actual kind of main.yml file where we are defining which roles to be used in ansible implementation.This is your master playbook for hardening and standardizing Linux servers.
+7. **linux-site.yml** : same as "orig-linux-site.yml".This is a simplified or customized version of the original.
+8. **facts** : these are the facts being gathered by ansible for each server , it is defined inside ansible.cfg file.
+
